@@ -1,16 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-export const TablaOrdenes = ({nombreTabla, data}) => {
-  const orders = [
-    { id: 'ORD-001', escuela: 'Central High School', date: '5/10/2024', qty: 4, status: 'In Progress' },
-    { id: 'ORD-002', school: 'North Elementary', date: '5/12/2024', qty: 2, status: 'In Progress' },
-    { id: 'ORD-003', school: 'South Middle School', date: '5/8/2024', qty: 1, status: 'Completed' },
-  ]
+export const TablaOrdenes = ({ ordenesReparando, ordenesCompletadas }) => {
+  const [filtro, setFiltro] = useState('reparando')
+
+  const datos = filtro === 'reparando' ? ordenesReparando : ordenesCompletadas
+
+  const getStatusColor = (estado) => {
+    if (estado === 'REPARANDO') return 'bg-orange-100 text-orange-600'
+    if (estado === 'COMPLETADO') return 'bg-green-100 text-green-600'
+    return 'bg-gray-100 text-gray-600'
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('es-ES')
+  }
 
   return (
     <>
       <section className="mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Órdenes en proceso</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Órdenes</h2>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setFiltro('reparando')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                filtro === 'reparando'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Reparando
+            </button>
+            <button
+              onClick={() => setFiltro('completado')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                filtro === 'completado'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Completado
+            </button>
+          </div>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -25,23 +60,31 @@ export const TablaOrdenes = ({nombreTabla, data}) => {
               </tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
-                <tr key={o.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">-</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 font-semibold">-</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 font-semibold">-</td>
-                  <td className="px-6 py-4 text-sm text-red-700 font-semibold">-</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 font-semibold">-</td>
-                  <td className="px-6 py-4 text-sm text-semibold">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium`}>
-                      -
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">Detalle</button>
+              {datos && datos.length > 0 ? (
+                datos.map((orden) => (
+                  <tr key={orden.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{orden.id}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 font-semibold">{orden.escuela.nombre}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 font-semibold">{formatDate(orden.fechaIngreso)}</td>
+                    <td className="px-6 py-4 text-sm text-red-700 font-semibold">{formatDate(orden.fechaLimite)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 font-semibold">{orden.cantLaptops}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(orden.estado)}`}>
+                        {orden.estado}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">Detalle</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
+                    No hay órdenes disponibles
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
