@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { traerOrdenes } from '../../api/OrdenesApi'
+import { useNavigate } from 'react-router'
 
 export const Ordenes = () => {
+  const navigate = useNavigate()
   const [ordenes, setOrdenes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -76,7 +78,12 @@ export const Ordenes = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm">
-                        <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">Detalle</button>
+                        <button 
+                          onClick={() => navigate(`/ordenes/${o.id}`)}
+                          className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                        >
+                          Detalle
+                        </button>
                       </td>
                     </tr>
                   ))
