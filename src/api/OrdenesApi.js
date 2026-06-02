@@ -22,16 +22,6 @@ export const obtenerDetalleOrden = async(id) => {
     }
 }
 
-export const cambiarEstadoLaptop = async(ordenId, laptopId, estado) => {
-    try {
-        const response = await axios.put(`${API_URL}/${ordenId}/laptops/${laptopId}/estado`, { estado });
-        return response.data;
-    } catch (error) {
-        console.error('Error al cambiar estado del laptop:', error);
-        throw error;
-    }
-}
-
 export const obtenerDetalleLaptop = async(ordenId, laptopId) => {
     try {
         const response = await axios.get(`${API_URL}/${ordenId}/laptops/${laptopId}`);

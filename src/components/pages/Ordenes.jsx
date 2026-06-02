@@ -26,9 +26,10 @@ export const Ordenes = () => {
   }, [])
 
   const getStatusColor = (status) => {
-    if (status === 'In Progress' || status === 'En Progreso') return 'bg-orange-100 text-orange-600'
-    if (status === 'Completed' || status === 'Completado') return 'bg-green-100 text-green-600'
-    if (status === 'Pending' || status === 'Pendiente') return 'bg-yellow-100 text-yellow-600'
+    if (status === 'REPARANDO') return 'bg-orange-100 text-orange-600'
+    if (status === 'COMPLETADO') return 'bg-green-100 text-green-600'
+    if (status === 'EN_ESPERA') return 'bg-yellow-100 text-yellow-600'
+    if (status === 'ENTREGADO') return 'bg-yellow-100 text-green-800'
     return 'bg-gray-100 text-gray-600'
   }
 
@@ -73,8 +74,8 @@ export const Ordenes = () => {
                       <td className="px-6 py-4 text-sm text-red-700 font-semibold">{o.fechaLimite}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 font-semibold">{o.cantLaptops}</td>
                       <td className="px-6 py-4 text-sm text-semibold">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(o.status)}`}>
-                          {o.status}
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(o.estado)}`}>
+                          {o.estado}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm">
