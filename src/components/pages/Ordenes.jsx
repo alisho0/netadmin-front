@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { traerOrdenes } from '../../api/OrdenesApi'
 import { useNavigate } from 'react-router'
+import { PlusIcon } from 'lucide-react'
+import { CrossIcon } from 'lucide-react'
 
 export const Ordenes = () => {
   const navigate = useNavigate()
   const [ordenes, setOrdenes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [modalOrden, setModalOrden] = useState(false);
 
   useEffect(() => {
     const fetchOrdenes = async () => {
@@ -33,11 +36,23 @@ export const Ordenes = () => {
     return 'bg-gray-100 text-gray-600'
   }
 
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Órdenes</h1>
-      <p className="text-gray-600">Gestiona todas las órdenes aquí</p>
-
+      <p className="text-gray-600 mb-4">Gestiona todas las órdenes aquí</p>
+      <div onClick={() => setModalOrden(true)} className='p-3 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
+        <PlusIcon className='w-4'/>
+        <p>Nueva Orden</p>
+      </div>
+      {modalOrden && (
+        <div className=''>
+          <div className='bg-black h-dvh'>
+            <CrossIcon onClick={() => setModalOrden(false)} className='w-4'/>
+            <p>Modal abierto</p>
+          </div>
+        </div>
+      )}
       {loading && (
         <div className="mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-md text-center">
           <p className="text-gray-600">Cargando órdenes...</p>

@@ -20,7 +20,7 @@ export const Escuelas = () => {
     <div className="p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Escuelas</h1>
       <p className="text-gray-600 mb-4">Gestiona tus escuelas aquí</p>
-
+           
       <section>
         {escuelas.length > 0 ? escuelas.map((e) => (
           <div className='border p-3 rounded-2xl border-gray-200 bg-white shadow' key={e.id}>
