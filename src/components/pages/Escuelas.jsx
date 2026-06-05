@@ -5,9 +5,11 @@ import { listarEscuelas } from '../../api/escuelasApi';
 import { LocationEditIcon } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
+import { CrearEscuelaForm } from '../escuela/CrearEscuelaForm';
 
 export const Escuelas = () => {
   const [escuelas, setEscuelas] = useState([]);
+  const [modal, setModal] = useState(false);
   useEffect(() => {
     const fetchEscuelas = async () => {
       const data = await listarEscuelas();
@@ -20,7 +22,14 @@ export const Escuelas = () => {
     <div className="p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Escuelas</h1>
       <p className="text-gray-600 mb-4">Gestiona tus escuelas aquí</p>
-           
+      
+      <button 
+        className="bg-blue-500 text-white px-4 py-2 rounded" 
+        onClick={() => setModal(true)}
+      >
+        Agregar escuela
+      </button>
+      {(modal && <CrearEscuelaForm setModal={setModal} />)}
       <section>
         {escuelas.length > 0 ? escuelas.map((e) => (
           <div className='border p-3 rounded-2xl border-gray-200 bg-white shadow' key={e.id}>
