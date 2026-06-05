@@ -12,3 +12,14 @@ export const listarEscuelas = async () => {
         throw error;
     }
 }
+
+export const listarEscuelasResumen = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/escuelas/select`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al listar resumen de escuelas:', error);
+        throw error;
+    }
+}

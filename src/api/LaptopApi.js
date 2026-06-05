@@ -28,4 +28,4 @@ export const cambiarEstadoLaptop = async(laptopId, estado) => {
         console.error('Error al cambiar estado del laptop:', error);
         throw error;
     }
-}
+} 
