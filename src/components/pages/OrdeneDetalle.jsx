@@ -32,11 +32,12 @@ export const OrdeneDetalle = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      'INGRESADA': 'bg-yellow-100 text-yellow-700',
-      'EN_REPARACION': 'bg-orange-100 text-orange-700',
-      'REPARADA': 'bg-green-100 text-green-700',
-      'FALTA_REPUESTO': 'bg-red-100 text-red-700',
-      'ROTA': 'bg-red-200 text-red-800'
+      'INGRESADA': 'bg-yellow-100 border border-yellow-700 text-yellow-700',
+      'EN_REPARACION': 'bg-orange-100 text-orange-700 border border-orange-700',
+      'REPARADA': 'bg-green-100 text-green-700 border border-green-700',
+      'FALTA_REPUESTO': 'bg-red-100 text-red-700 border border-red-700',
+      'ROTA': 'bg-red-200 text-red-800 border border-red-800',
+      'DEVUELTA': 'bg-gray-100 text-gray-700 border border-gray-700'
     }
     return colors[status] || 'bg-gray-100 text-gray-700'
   }

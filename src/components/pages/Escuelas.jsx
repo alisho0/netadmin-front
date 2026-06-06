@@ -6,6 +6,7 @@ import { LocationEditIcon } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { CrearEscuelaForm } from '../escuela/CrearEscuelaForm';
+import { PlusIcon } from 'lucide-react';
 
 export const Escuelas = () => {
   const [escuelas, setEscuelas] = useState([]);
@@ -23,12 +24,10 @@ export const Escuelas = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Escuelas</h1>
       <p className="text-gray-600 mb-4">Gestiona tus escuelas aquí</p>
       
-      <button 
-        className="bg-blue-500 text-white px-4 py-2 rounded" 
-        onClick={() => setModal(true)}
-      >
-        Agregar escuela
-      </button>
+      <div onClick={() => setModal(true)} className='p-3 mb-4 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
+        <PlusIcon className='w-4'/>
+        <p>Nueva Escuela</p>
+      </div>
       {(modal && <CrearEscuelaForm setModal={setModal} />)}
       <section>
         {escuelas.length > 0 ? escuelas.map((e) => (

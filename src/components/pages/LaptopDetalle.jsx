@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { obtenerDetalleLaptop, actualizarDetalleLaptop } from '../../api/OrdenesApi'
+import { Pencil } from 'lucide-react'
+import { ScanBarcode } from 'lucide-react'
 
 export const LaptopDetalle = () => {
   const { id, laptopId } = useParams()
@@ -15,6 +17,8 @@ export const LaptopDetalle = () => {
     encargado: '',
     notas: ''
   })
+  const [selectedStatus, setSelectedStatus] = useState(null)
+  const [savingStatus, setSavingStatus] = useState(false)
 
   useEffect(() => {
     const fetchLaptop = async () => {
@@ -28,6 +32,7 @@ export const LaptopDetalle = () => {
           encargado: data.encargado || '',
           notas: data.notas || ''
         })
+        setSelectedStatus(data.estado || null)
       } catch (err) {
         setError(err.message || 'Error al cargar el laptop')
         console.error(err)
@@ -39,26 +44,16 @@ export const LaptopDetalle = () => {
     fetchLaptop()
   }, [id, laptopId])
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'INGRESADA': 'bg-yellow-100 text-yellow-700',
-      'EN_REPARACION': 'bg-orange-100 text-orange-700',
-      'REPARADA': 'bg-green-100 text-green-700',
-      'FALTA_REPUESTO': 'bg-red-100 text-red-700',
-      'ROTA': 'bg-red-200 text-red-800'
+  const getStatusBadge = (status) => {
+    const map = {
+      'INGRESADA': 'bg-yellow-100 border border-yellow-700 text-yellow-700',
+      'EN_REPARACION': 'bg-orange-100 text-orange-700 border border-orange-700',
+      'REPARADA': 'bg-green-100 text-green-700 border border-green-700',
+      'FALTA_REPUESTO': 'bg-red-100 text-red-700 border border-red-700',
+      'ROTA': 'bg-red-200 text-red-800 border border-red-800',
+      'DEVUELTA': 'bg-gray-100 text-gray-700 border border-gray-700'
     }
-    return colors[status] || 'bg-gray-100 text-gray-700'
-  }
-
-  const getStatusLabel = (status) => {
-    const labels = {
-      'INGRESADA': 'Ingresada',
-      'EN_REPARACION': 'En Reparación',
-      'REPARADA': 'Reparada',
-      'FALTA_REPUESTO': 'Falta Repuesto',
-      'ROTA': 'Rota'
-    }
-    return labels[status] || status
+    return map[status] || 'bg-gray-100 text-gray-700'
   }
 
   const handleInputChange = (e) => {
@@ -95,6 +90,28 @@ export const LaptopDetalle = () => {
     setIsEditing(false)
   }
 
+  const handleStatusChange = async (status) => {
+    if (!laptop) return
+    if (status === selectedStatus) return
+    setSelectedStatus(status)
+    setSavingStatus(true)
+    try {
+      await actualizarDetalleLaptop(id, laptopId, { estado: status })
+      setLaptop(prev => ({ ...prev, estado: status }))
+    } catch (err) {
+      console.error('Error actualizando estado', err)
+      // revert selection on error
+      setSelectedStatus(laptop.estado)
+      alert('No se pudo actualizar el estado')
+    } finally {
+      setSavingStatus(false)
+    }
+  }
+
+  const handlePrint = () => {
+    window.print()
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -127,133 +144,75 @@ export const LaptopDetalle = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      {/* Header */}
-      <button
-        onClick={() => navigate(`/ordenes/${id}`)}
-        className="text-blue-600 hover:text-blue-800 font-medium mb-6 flex items-center gap-2"
-      >
-        <span>←</span> Volver a Orden
-      </button>
-
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Laptop {laptop.posicionEnOrden}</h1>
-        <p className="text-gray-600">Edita los detalles de este laptop</p>
+        <h1 className="text-3xl font-extrabold text-gray-900">Detalles de la netbook</h1>
+        <p className="text-gray-600">Administra la información de la netbook aquí.</p>
       </div>
 
-      {/* Status Card */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8">
-        <p className="text-sm text-gray-600 font-semibold mb-2">ESTADO</p>
-        <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(laptop.estado)}`}>
-          {getStatusLabel(laptop.estado)}
-        </span>
-      </div>
+      <div className="grid grid-cols-3 gap-6">
+        {/* Left: main content */}
+        <div className="col-span-2 space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Código</p>
+                <p className="text-lg font-semibold text-gray-900 font-mono">{laptop.codigoBarra || '—'}</p>
 
-      {/* Form */}
-      <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Detalles</h2>
+                <p className="text-sm text-gray-500 mt-6">Escuela</p>
+                <p className="text-base font-semibold text-gray-900">{laptop.escuela?.nombre || '—'}</p>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">Posición</p>
+                <p className="text-lg font-bold text-gray-900">#{laptop.posicionEnOrden}</p>
+
+                <p className="text-sm text-gray-500 mt-6">Número de orden</p>
+                <p className="text-base font-bold text-gray-900">{laptop.orden?.numero || laptop.ordenId || '—'}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Descripción del problema</h3>
+            <div className="bg-gray-50 p-4 rounded-md text-gray-700">{laptop.descripcionProblema || '—'}</div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Técnico Asignado</h3>
+            <p className="text-gray-700">{laptop.encargado || 'Not assigned'}</p>
+          </div>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Código de Barra */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Código de Barra
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                name="codigoBarra"
-                value={formData.codigoBarra}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ingresa el código de barra"
-              />
-            ) : (
-              <p className="text-gray-700 font-mono">{laptop.codigoBarra || '—'}</p>
-            )}
-          </div>
-
-          {/* Descripción del Problema */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Descripción del Problema
-            </label>
-            {isEditing ? (
-              <textarea
-                name="descripcionProblema"
-                value={formData.descripcionProblema}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-24"
-                placeholder="Describe el problema"
-              />
-            ) : (
-              <p className="text-gray-700">{laptop.descripcionProblema || '—'}</p>
-            )}
-          </div>
-
-          {/* Encargado */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Encargado del Arreglo
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                name="encargado"
-                value={formData.encargado}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nombre del encargado"
-              />
-            ) : (
-              <p className="text-gray-700">{laptop.encargado || '—'}</p>
-            )}
-          </div>
-
-          {/* Notas */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Notas Adicionales
-            </label>
-            {isEditing ? (
-              <textarea
-                name="notas"
-                value={formData.notas}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-24"
-                placeholder="Añade notas adicionales"
-              />
-            ) : (
-              <p className="text-gray-700">{laptop.notas || '—'}</p>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  ✓ Guardar
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="px-6 py-2 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors"
-                >
-                  ✕ Cancelar
-                </button>
-              </>
-            ) : (
+        {/* Right: sidebar */}
+        <div className="col-span-1 space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Estado y Acciones</h3>
+            <p className="text-sm text-gray-600 mb-3">Estado Actual</p>
+            <div className="mb-4">
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusBadge(laptop.estado)}`}>
+                {laptop.estado}
+              </span>
+            </div>
+            <div className='flex flex-col gap-2'>
               <button
-                onClick={() => setIsEditing(true)}
-                className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Editar
+                className="w-full font-semibold cursor-pointer flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                <Pencil className='w-4 h-4'/>
+                Editar datos
               </button>
-            )}
+              <button
+                className="w-full flex cursor-pointer items-center justify-center gap-2 px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                <Pencil className='w-4 h-4'/>
+                Cambiar estado
+              </button>
+              <button
+                className="w-full flex cursor-pointer items-center justify-center gap-2 px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                <ScanBarcode className='w-4 h-4'/>
+                Escanear Código
+              </button>
+            </div>
           </div>
         </div>
       </div>
