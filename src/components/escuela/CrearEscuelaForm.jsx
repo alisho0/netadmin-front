@@ -1,16 +1,32 @@
 import { X } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { crearEscuela } from "../../api/escuelasApi";
 
-export const CrearEscuelaForm = ({ setModal }) => {
+export const CrearEscuelaForm = ({ setModal, onCreated }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const onSubmit = async (data, e) => {
+    setSubmitError(null);
+    setLoading(true);
+    try {
+      const created = await crearEscuela(data);
+      setLoading(false);
+      e && e.target && e.target.reset();
+      if (onCreated) onCreated(created);
+      setModal(false);
+    } catch (error) {
+      console.error("Error creando escuela:", error);
+      setSubmitError(error?.response?.data?.message || "Error al crear la escuela");
+      setLoading(false);
+    }
   };
 
   /*
@@ -26,7 +42,7 @@ export const CrearEscuelaForm = ({ setModal }) => {
     */
   return (
     <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-96 relative">
+      <div className="bg-white p-6 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-xl relative mx-4">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
@@ -45,7 +61,7 @@ export const CrearEscuelaForm = ({ setModal }) => {
         </div>
         <div>
           <form
-            className="grid md:grid-cols-2 gap-2"
+            className="grid md:grid-cols-2 gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div>
@@ -56,12 +72,12 @@ export const CrearEscuelaForm = ({ setModal }) => {
                 Nombre de la escuela:
               </label>
               <input
-                {...register("nombre_escuela", { required: true })}
+                {...register("nombre", { required: true })}
                 type="text"
-                id="nombre_escuela"
+                id="nombre"
                 className="block p-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
-              {errors.nombre_escuela && (
+              {errors.nombre && (
                 <span className="text-red-500 text-sm">
                   Este campo es requerido
                 </span>
@@ -109,11 +125,29 @@ export const CrearEscuelaForm = ({ setModal }) => {
               />
             </div>
             <div>
+              <label htmlFor="telefono" className="block text-sm text-gray-700">
+                Teléfono de contacto:
+              </label>
+              <input
+                {...register("telefono")}
+                type="text"
+                id="telefono"
+                className="block p-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            {submitError && (
+              <div className="md:col-span-2">
+                <p className="text-sm text-red-600">{submitError}</p>
+              </div>
+            )}
+
+            <div className="md:col-span-2 flex justify-end">
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 cursor-pointer rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="bg-blue-500 text-white py-2 px-4 w-full md:w-auto cursor-pointer rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-60"
+                disabled={loading}
               >
-                Crear escuela
+                {loading ? "Creando..." : "Crear escuela"}
               </button>
             </div>
           </form>

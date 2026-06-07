@@ -6,9 +6,9 @@ export const TablaOrdenes = ({ ordenesReparando, ordenesCompletadas }) => {
   const datos = filtro === 'reparando' ? ordenesReparando : ordenesCompletadas
 
   const getStatusColor = (estado) => {
-    if (estado === 'REPARANDO') return 'bg-orange-100 text-orange-600'
-    if (estado === 'COMPLETADO') return 'bg-green-100 text-green-600'
-    return 'bg-gray-100 text-gray-600'
+    if (estado === 'REPARANDO') return 'bg-orange-100 text-orange-600 border border-orange-300'
+    if (estado === 'COMPLETADO') return 'bg-green-100 text-green-600 border border-green-300'
+    return 'bg-gray-100 text-gray-600 border border-gray-300'
   }
 
   const formatDate = (dateString) => {

@@ -23,3 +23,14 @@ export const listarEscuelasResumen = async () => {
         throw error;
     }
 }
+
+export const crearEscuela = async (escuelaData) => {
+    try {
+        const response = await axios.post(`${API_URL}/escuelas`, escuelaData);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al crear escuela:', error);
+        throw error;
+    }
+}

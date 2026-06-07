@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { obtenerDetalleOrden } from '../../api/OrdenesApi'
 import { useNavigate, useParams } from 'react-router'
 import { cambiarEstadoLaptop } from '../../api/LaptopApi'
+import { Eye } from 'lucide-react'
+import { ScanBarcode } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 
 export const OrdeneDetalle = () => {
   const { id } = useParams()
@@ -201,12 +204,17 @@ export const OrdeneDetalle = () => {
                     {laptop.descripcionProblema || '—'}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <button
-                      onClick={() => navigate(`/ordenes/${id}/laptops/${laptop.id}`)}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      Detalle
-                    </button>
+                    <div>
+                      <button onClick={() => navigate(`/ordenes/${id}/laptops/${laptop.id}`)}>
+                        <Eye className="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                      </button>
+                      <button>
+                        <ScanBarcode className="w-5 h-5 text-green-600 hover:text-green-800 ml-3" />
+                      </button>
+                      <button>
+                        <Pencil className="w-5 h-5 text-yellow-600 hover:text-yellow-800 ml-3" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
