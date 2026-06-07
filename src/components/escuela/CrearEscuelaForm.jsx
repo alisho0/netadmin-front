@@ -28,18 +28,6 @@ export const CrearEscuelaForm = ({ setModal, onCreated }) => {
       setLoading(false);
     }
   };
-
-  /*
-                <div className='flex justify-between items-center mb-6'>
-                  <h2 className='text-2xl font-bold text-gray-900'>Nueva Orden</h2>
-                  <button
-                    onClick={handleCerrarModal}
-                    className='text-gray-400 hover:text-gray-600 transition-colors'
-                  >
-                    <X className='w-6 h-6 cursor-pointer' />
-                  </button>
-                </div>
-    */
   return (
     <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-xl relative mx-4">

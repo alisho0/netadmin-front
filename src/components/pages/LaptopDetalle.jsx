@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router'
 import { obtenerDetalleLaptop, actualizarDetalleLaptop } from '../../api/OrdenesApi'
 import { Pencil } from 'lucide-react'
 import { ScanBarcode } from 'lucide-react'
+import { EditarLaptopForm } from '../laptop/EditarLaptopForm'
 
 export const LaptopDetalle = () => {
   const { id, laptopId } = useParams()
   const navigate = useNavigate()
+  const [modalEditar, setModalEditar] = useState(false);
   const [laptop, setLaptop] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -183,6 +185,12 @@ export const LaptopDetalle = () => {
           </div>
         </div>
 
+        {modalEditar && (
+          <EditarLaptopForm
+            laptop={laptop}
+            setModal={setModalEditar}
+          />
+        )}
         {/* Right: sidebar */}
         <div className="col-span-1 space-y-6">
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
@@ -196,6 +204,7 @@ export const LaptopDetalle = () => {
             <div className='flex flex-col gap-2'>
               <button
                 className="w-full font-semibold cursor-pointer flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => setModalEditar(true)}
                 >
                 <Pencil className='w-4 h-4'/>
                 Editar datos
