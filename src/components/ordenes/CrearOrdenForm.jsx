@@ -4,8 +4,9 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { listarEscuelasResumen } from '../../api/escuelasApi'
+import { crearOrden } from '../../api/OrdenesApi'
 
-export const CrearOrdenForm = ({modalOrden, setModalOrden}) => {
+export const CrearOrdenForm = ({modalOrden, setModalOrden, handleNuevaOrden}) => {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm({
     defaultValues: {
       escuelaId: null,
@@ -19,6 +20,8 @@ export const CrearOrdenForm = ({modalOrden, setModalOrden}) => {
   const [escuelasFiltradas, setEscuelasFiltradas] = useState([])
   const [mostrarDropdown, setMostrarDropdown] = useState(false)
   const [cargandoEscuelas, setCargandoEscuelas] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   // Cargar escuelas cuando se abre el modal
   useEffect(() => {
@@ -71,15 +74,22 @@ export const CrearOrdenForm = ({modalOrden, setModalOrden}) => {
     reset()
   }
 
-  const onSubmitOrden = (data) => {
-    const nuevoOrden = {
-      escuelaId: escuelaSeleccionada.id,
-      cantidadLaptops: parseInt(data.cantidadLaptops),
+  const onSubmitOrden = async (data, e) => {
+    console.log('Datos a enviar:', data)
+    setSubmitError(null);
+    setLoading(true);
+    try {
+      const created = await crearOrden(data);
+      setLoading(false);
+      e && e.target && e.target.reset();
+      if (handleNuevaOrden) handleNuevaOrden(created);
+      setModal(false);
+    } catch (error) {
+      console.error("Error creando orden:", error);
+      setSubmitError(error?.response?.data?.message || "Error al crear la orden");
+      setLoading(false);
     }
-    console.log('Crear orden:', nuevoOrden)
-    // Aquí irá la llamada a la API para crear la orden
-    handleCerrarModal()
-  }
+  };
   return (
     <>
         <div className='fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50'>
@@ -148,14 +158,15 @@ export const CrearOrdenForm = ({modalOrden, setModalOrden}) => {
                     type='number'
                     min='1'
                     placeholder='Ingresa la cantidad...'
-                    {...register('cantidadLaptops', {
+                    {...register('cantLaptops', {
                       required: 'La cantidad es requerida',
+                      valueAsNumber: true,
                       min: { value: 1, message: 'Debe ser mayor a 0' }
                     })}
                     className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
                   />
-                  {errors.cantidadLaptops && (
-                    <p className='text-red-500 text-sm mt-1'>{errors.cantidadLaptops.message}</p>
+                  {errors.cantLaptops && (
+                    <p className='text-red-500 text-sm mt-1'>{errors.cantLaptops.message}</p>
                   )}
                 </div>
               </div>

@@ -109,6 +109,9 @@ export const LaptopDetalle = () => {
       setSavingStatus(false)
     }
   }
+  const handleEditarLaptop = (updatedLaptop) => {
+    setLaptop(updatedLaptop)
+  }
 
   const handlePrint = () => {
     window.print()
@@ -189,6 +192,7 @@ export const LaptopDetalle = () => {
           <EditarLaptopForm
             laptop={laptop}
             setModal={setModalEditar}
+            handleEditarLaptop={handleEditarLaptop}
           />
         )}
         {/* Right: sidebar */}

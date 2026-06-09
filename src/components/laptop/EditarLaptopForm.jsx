@@ -1,17 +1,32 @@
 import { X } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { actualizarLaptop } from '../../api/LaptopApi';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-export const EditarLaptopForm = ({ laptop, setModal }) => {
+export const EditarLaptopForm = ({ laptop, setModal, handleEditarLaptop }) => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
+      const [loading, setLoading] = useState(false);
+      const [submitError, setSubmitError] = useState(null);
 
-    const onSubmit = (data) => {
-        console.log('Datos del formulario:', data);
-        // Aquí puedes agregar la lógica para enviar los datos al backend o actualizar el estado
-        setModal(false); // Cerrar el modal después de guardar
+    const onSubmit = async (data, e) => {
+        console.log('Datos a enviar:', data)
+        setSubmitError(null);
+        setLoading(true);
+        try {
+          const created = await actualizarLaptop(laptop.id,data);
+          setLoading(false);
+          e && e.target && e.target.reset();
+          if (handleEditarLaptop) handleEditarLaptop(created);
+          setModal(false);
+        } catch (error) {
+          console.error("Error actualizando laptop:", error);
+          setSubmitError(error?.response?.data?.message || "Error al actualizar la laptop");
+          setLoading(false);
+        }
     }
-
   return (
     <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white p-6 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-xl relative mx-4">

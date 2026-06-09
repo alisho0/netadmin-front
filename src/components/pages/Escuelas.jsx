@@ -1,6 +1,5 @@
 
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { listarEscuelas } from '../../api/escuelasApi';
 import { LocationEditIcon } from 'lucide-react';
 import { MapPin } from 'lucide-react';
@@ -11,6 +10,8 @@ import { PlusIcon } from 'lucide-react';
 export const Escuelas = () => {
   const [escuelas, setEscuelas] = useState([]);
   const [modal, setModal] = useState(false);
+  const [search, setSearch] = useState('');
+  const [localidadFilter, setLocalidadFilter] = useState('');
   const handleNuevaEscuela = (escuela) => {
     setEscuelas((prev) => [escuela, ...prev]);
   };
@@ -22,18 +23,56 @@ export const Escuelas = () => {
     };
     fetchEscuelas();
   }, []);
+
+  const localidades = useMemo(() => {
+    if (!Array.isArray(escuelas)) return [];
+    return Array.from(new Set(escuelas.map((e) => e.localidad).filter(Boolean))).sort();
+  }, [escuelas]);
+
+  const escuelasFiltradas = useMemo(() => {
+    if (!Array.isArray(escuelas)) return [];
+    const term = search.trim().toLowerCase();
+    return escuelas.filter((e) => {
+      if (localidadFilter && e.localidad !== localidadFilter) return false;
+      if (!term) return true;
+      const nombre = (e.nombre || '').toString().toLowerCase();
+      const cue = (e.cue || '').toString().toLowerCase();
+      return nombre.includes(term) || cue.includes(term);
+    });
+  }, [escuelas, search, localidadFilter]);
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Escuelas</h1>
       <p className="text-gray-600 mb-4">Gestiona tus escuelas aquí</p>
       
-      <div onClick={() => setModal(true)} className='p-3 mb-4 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
-        <PlusIcon className='w-4'/>
-        <p>Nueva Escuela</p>
+      <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4'>
+        <div className='flex items-center gap-3 w-full md:w-2/3'>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder='Buscar por nombre o CUE...'
+            className='block p-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+          />
+          <select
+            value={localidadFilter}
+            onChange={(e) => setLocalidadFilter(e.target.value)}
+            className='p-2 border rounded-lg bg-white border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+          >
+            <option value=''>Todas las localidades</option>
+            {localidades.map((loc) => (
+              <option key={loc} value={loc}>{loc}</option>
+            ))}
+          </select>
+        </div>
+
+        <div onClick={() => setModal(true)} className='p-3 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
+          <PlusIcon className='w-4'/>
+          <p>Nueva Escuela</p>
+        </div>
       </div>
       {(modal && <CrearEscuelaForm setModal={setModal} onCreated={handleNuevaEscuela} />)}
       <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {Array.isArray(escuelas) && escuelas.length > 0 ? escuelas.map((e) => (
+        {Array.isArray(escuelasFiltradas) && escuelasFiltradas.length > 0 ? escuelasFiltradas.map((e) => (
           <div className='border p-3 rounded-2xl border-gray-200 bg-white shadow' key={e.id}>
             <h2 className="px-2 pt-1 text-xl font-semibold text-gray-700">{e.nombre} | CUE: {e.cue}</h2>
             <div className='flex flex-col gap-1.5 mt-4 border-b border-b-gray-400 pb-3'>

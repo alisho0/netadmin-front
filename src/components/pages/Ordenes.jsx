@@ -12,6 +12,9 @@ export const Ordenes = () => {
   const [error, setError] = useState(null)
   const [modalOrden, setModalOrden] = useState(false)
 
+  const handleNuevaOrden = (orden) => {
+    setOrdenes((prev) => [orden, ...prev]);
+  };
   useEffect(() => {
     const fetchOrdenes = async () => {
       try {
@@ -40,14 +43,18 @@ export const Ordenes = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Órdenes</h1>
-      <p className="text-gray-600 mb-4">Gestiona todas las órdenes aquí</p>
-      <div onClick={() => setModalOrden(true)} className='p-3 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
-        <PlusIcon className='w-4'/>
-        <p>Nueva Orden</p>
+      <div className='flex justify-between items-center mb-6'>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Órdenes</h1>
+          <p className="text-gray-600 mb-4">Gestiona todas las órdenes aquí</p>
+        </div>
+        <div onClick={() => setModalOrden(true)} className='p-3 cursor-pointer hover:bg-blue-700 transition-colors rounded-xl bg-blue-600 text-white font-semibold flex gap-2'>
+          <PlusIcon className='w-4'/>
+          <p>Nueva Orden</p>
+        </div>
       </div>
       {modalOrden && (
-        <CrearOrdenForm setModalOrden={setModalOrden} modalOrden={modalOrden} />
+        <CrearOrdenForm handleNuevaOrden={handleNuevaOrden} setModalOrden={setModalOrden} modalOrden={modalOrden} />
       )}
       {loading && (
         <div className="mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-md text-center">

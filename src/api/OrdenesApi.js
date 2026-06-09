@@ -12,6 +12,16 @@ export const traerOrdenes = async(params = {}) => {
     }
 }
 
+export const crearOrden = async(data) => {
+    try {
+        const response = await axios.post(API_URL, data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al crear la orden:', error);
+        throw error;
+    }
+}
+
 export const obtenerDetalleOrden = async(id) => {
     try {
         const response = await axios.get(`${API_URL}/${id}`);
