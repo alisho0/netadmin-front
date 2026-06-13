@@ -20,7 +20,7 @@ export const TablaOrdenes = ({ ordenesReparando, ordenesCompletadas }) => {
   return (
     <>
       <section className="mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 flex-col gap-3 md:flex-row">
           <h2 className="text-xl font-bold text-gray-800">Órdenes</h2>
           <div className="flex gap-3">
             <button
@@ -47,7 +47,7 @@ export const TablaOrdenes = ({ ordenesReparando, ordenesCompletadas }) => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-100 border-b border-gray-200">
                 <th className="px-6 py-3 text-left text-sm font-bold text-gray-700">ID</th>

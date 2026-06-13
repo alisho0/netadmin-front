@@ -5,6 +5,8 @@ import { cambiarEstadoLaptop } from '../../api/LaptopApi'
 import { Eye } from 'lucide-react'
 import { ScanBarcode } from 'lucide-react'
 import { Pencil } from 'lucide-react'
+import { EditarLaptopForm } from '../laptop/EditarLaptopForm'
+import { EditarEstadoForm } from '../laptop/EditarEstadoForm'
 
 export const OrdeneDetalle = () => {
   const { id } = useParams()
@@ -14,6 +16,7 @@ export const OrdeneDetalle = () => {
   const [error, setError] = useState(null)
   const [changedStatusLaptopId, setChangedStatusLaptopId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpenEditar, setModalOpenEditar] = useState(false)
   const [selectedLaptop, setSelectedLaptop] = useState(null)
 
   useEffect(() => {
@@ -89,6 +92,17 @@ export const OrdeneDetalle = () => {
     setSelectedLaptop(null)
   }
 
+  const handleEditarLaptop = (updatedLaptop) => {
+    setOrden(prev => ({
+      ...prev,
+      laptops: prev.laptops.map(l =>
+        l.id === updatedLaptop.id ? updatedLaptop : l
+      )
+    }))
+    setModalOpen(false)
+    setSelectedLaptop(null)
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -125,14 +139,16 @@ export const OrdeneDetalle = () => {
     <div className="p-8 bg-gray-50 min-h-screen">
       {/* Header */}
       <button
-        onClick={() => navigate('/ordenes')}
+        onClick={() => navigate("/ordenes")}
         className="text-blue-600 hover:text-blue-800 font-medium mb-6 flex items-center gap-2"
       >
         <span>←</span> Volver a Órdenes
       </button>
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">ORD-{String(orden.numeroOrden).padStart(3, '0')}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          ORD-{String(orden.numeroOrden).padStart(3, "0")}
+        </h1>
         <p className="text-gray-600">Gestiona los laptops en esta orden</p>
       </div>
 
@@ -143,8 +159,12 @@ export const OrdeneDetalle = () => {
           <p className="text-xl font-bold text-gray-900">{orden.escuela}</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <p className="text-sm text-gray-600 font-semibold">FECHA DE INGRESO</p>
-          <p className="text-xl font-bold text-gray-900">{orden.fechaIngreso}</p>
+          <p className="text-sm text-gray-600 font-semibold">
+            FECHA DE INGRESO
+          </p>
+          <p className="text-xl font-bold text-gray-900">
+            {orden.fechaIngreso}
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <p className="text-sm text-gray-600 font-semibold">FECHA LÍMITE</p>
@@ -152,29 +172,44 @@ export const OrdeneDetalle = () => {
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <p className="text-sm text-gray-600 font-semibold">ESTADO GENERAL</p>
-          <p className="text-xl font-bold text-gray-900">{totalLaptops} laptops</p>
+          <p className="text-xl font-bold text-gray-900">
+            {totalLaptops} laptops
+          </p>
         </div>
       </div>
 
       {/* Laptops Section */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Laptops ({totalLaptops})</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Laptops ({totalLaptops})
+          </h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-100 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">POSICIÓN</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">CÓDIGO DE BARRA</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">ESTADO</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">PROBLEMA</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">ACCIÓN</th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  POSICIÓN
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  CÓDIGO DE BARRA
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  ESTADO
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  PROBLEMA
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  ACCIÓN
+                </th>
               </tr>
             </thead>
             <tbody>
-              {orden.laptops.map((laptop) => (
+              {orden.laptops.map((laptop) => {
+                return (
                 <tr
                   key={laptop.id}
                   className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
@@ -183,123 +218,69 @@ export const OrdeneDetalle = () => {
                     {laptop.posicionEnOrden}
                   </td>
                   <td className="px-6 py-4 text-sm font-mono text-gray-700">
-                    {laptop.codigoBarra || '—'}
+                    {laptop.codigoBarra || "—"}
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <button
                       onClick={() => openStatusModal(laptop)}
                       disabled={changedStatusLaptopId === laptop.id}
-                      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                        getStatusColor(laptop.estado)
-                      } ${
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${getStatusColor(
+                        laptop.estado,
+                      )} ${
                         changedStatusLaptopId === laptop.id
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'hover:shadow-md cursor-pointer'
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:shadow-md cursor-pointer"
                       }`}
                     >
                       {getStatusLabel(laptop.estado)}
                     </button>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
-                    {laptop.descripcionProblema || '—'}
+                    {laptop.descripcionProblema || "—"}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <div>
-                      <button onClick={() => navigate(`/ordenes/${id}/laptops/${laptop.id}`)}>
-                        <Eye className="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                    <div className="flex flex-col gap-2 items-center md:flex-row">
+                      <button className='bg-blue-100 border hover:bg-blue-200 transition-colors cursor-pointer border-blue-200 rounded-lg p-2'
+                        onClick={() =>
+                          navigate(`/ordenes/${id}/laptops/${laptop.id}`)
+                        }
+                      >
+                        <Eye className="w-5 h-5 text-blue-600 " />
                       </button>
-                      <button>
-                        <ScanBarcode className="w-5 h-5 text-green-600 hover:text-green-800 ml-3" />
+                      <button className='bg-green-100 border border-green-200 cursor-pointer transition-colors hover:bg-green-200 rounded-lg p-2'>
+                        <ScanBarcode className="w-5 h-5 text-green-600" />
                       </button>
-                      <button>
-                        <Pencil className="w-5 h-5 text-yellow-600 hover:text-yellow-800 ml-3" />
+                      <button className='bg-yellow-100 border border-yellow-200 cursor-pointer transition-colors hover:bg-yellow-200 rounded-lg p-2' onClick={() => {
+                        setModalOpenEditar(true)
+                        setSelectedLaptop(laptop)
+                      }}>
+                        <Pencil className="w-5 h-5 text-yellow-600 " />
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Modal para cambiar estado */}
+      {modalOpenEditar && selectedLaptop && (
+        <EditarLaptopForm
+          laptop={selectedLaptop}
+          setModal={setModalOpenEditar}
+          handleEditarLaptop={handleEditarLaptop}
+        />
+      )}
       {modalOpen && selectedLaptop && (
-        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Cambiar Estado</h2>
-              <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Laptop Info */}
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 font-semibold">Laptop: <span className="text-gray-900">{selectedLaptop.codigoBarra || 'N/A'}</span></p>
-              <p className="text-sm text-gray-600 font-semibold mt-2">
-                Estado actual: <span className="text-yellow-500 font-bold">{getStatusLabel(selectedLaptop.estado)}</span>
-              </p>
-            </div>
-
-            {/* Status Options */}
-            <div className="space-y-3 mb-6">
-              {['INGRESADA', 'EN_REPARACION', 'REPARADA', 'FALTA_REPUESTO', 'ROTA'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => handleStatusChange(selectedLaptop.id, status)}
-                  disabled={changedStatusLaptopId === selectedLaptop.id}
-                  className={`w-full p-3 rounded-lg border-2 text-left font-semibold transition-all ${
-                    selectedLaptop.estado === status
-                      ? 'border-blue-400 bg-blue-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  } ${
-                    changedStatusLaptopId === selectedLaptop.id
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'cursor-pointer'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`w-3 h-3 rounded-full ${
-                          status === 'INGRESADA'
-                            ? 'bg-yellow-400'
-                            : status === 'EN_REPARACION'
-                            ? 'bg-orange-400'
-                            : status === 'REPARADA'
-                            ? 'bg-green-400'
-                            : status === 'FALTA_REPUESTO'
-                            ? 'bg-red-400'
-                            : 'bg-red-700'
-                        }`}
-                      ></span>
-                      <span className="text-gray-900">{getStatusLabel(status)}</span>
-                    </div>
-                    {selectedLaptop.estado === status && (
-                      <span className="text-xs text-blue-600 font-semibold">Actual</span>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Footer */}
-            <div className="border-t border-gray-200 pt-4">
-              <button
-                onClick={closeModal}
-                className="w-full text-gray-600 hover:text-gray-900 font-semibold text-right"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditarEstadoForm
+          modalOpen={modalOpen}
+          selectedLaptop={selectedLaptop}
+          changedStatusLaptopId={changedStatusLaptopId}
+          getStatusLabel={getStatusLabel}
+          handleStatusChange={handleStatusChange}
+          closeModal={closeModal}
+        />
       )}
     </div>
-  )
+  );
 }

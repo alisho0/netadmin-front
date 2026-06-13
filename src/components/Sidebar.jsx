@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router'
-import { LayoutGrid, Package, Building2 } from 'lucide-react'
+import { LayoutGrid, Package, Building2, X } from 'lucide-react'
 
-export const Sidebar = () => {
+export const Sidebar = ({ isOpen = false, onClose = () => {} }) => {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -15,11 +15,20 @@ export const Sidebar = () => {
   const isActive = (path) => location.pathname === path
 
   return (
-    <div className="w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col text-white">
+    <div
+      className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col text-white md:relative md:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
       {/* Header */}
-      <div className="p-6 border-b border-slate-700">
-        <h1 className="text-2xl font-bold">NetAdmin</h1>
-        <p className="text-sm text-slate-400 mt-1">Taller</p>
+      <div className="p-6 border-b border-slate-700 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">NetAdmin</h1>
+          <p className="text-sm text-slate-400 mt-1">Taller</p>
+        </div>
+        <button className="md:hidden p-2 rounded-md hover:bg-slate-700/40" onClick={onClose} aria-label="Cerrar menú">
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Menu Items */}
