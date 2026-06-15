@@ -149,7 +149,7 @@ export const OrdeneDetalle = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
           ORD-{String(orden.numeroOrden).padStart(3, "0")}
         </h1>
-        <p className="text-gray-600">Gestiona los laptops en esta orden</p>
+        <p className="text-gray-600">Gestiona los netbooks en esta orden</p>
       </div>
 
       {/* Info Cards */}
@@ -173,7 +173,7 @@ export const OrdeneDetalle = () => {
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <p className="text-sm text-gray-600 font-semibold">ESTADO GENERAL</p>
           <p className="text-xl font-bold text-gray-900">
-            {totalLaptops} laptops
+            {totalLaptops} Netbooks
           </p>
         </div>
       </div>
@@ -182,7 +182,7 @@ export const OrdeneDetalle = () => {
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">
-            Laptops ({totalLaptops})
+            Netbooks ({totalLaptops})
           </h2>
         </div>
 
@@ -195,6 +195,12 @@ export const OrdeneDetalle = () => {
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
                   CÓDIGO DE BARRA
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  MARCA
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                  MODELO
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
                   ESTADO
@@ -219,6 +225,12 @@ export const OrdeneDetalle = () => {
                   </td>
                   <td className="px-6 py-4 text-sm font-mono text-gray-700">
                     {laptop.codigoBarra || "—"}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-mono text-gray-700">
+                    {laptop.marca || "—"}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-mono text-gray-700">
+                    {laptop.modelo || "—"}
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <button

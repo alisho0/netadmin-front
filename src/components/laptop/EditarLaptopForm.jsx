@@ -71,6 +71,47 @@ export const EditarLaptopForm = ({ laptop, setModal, handleEditarLaptop }) => {
                       className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
                     />
                 </div>
+                <div>
+                  <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                    Modelo
+                  </label>
+                  <select
+                    {...register('modelo', {
+                      required: 'El modelo es requerido'
+                    })}
+                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    defaultValue={laptop.modelo || ""}
+                  >
+                    <option value="">Selecciona un modelo</option>
+                    <option value="G4">G4</option>
+                    <option value="G5/G6">G5/G6</option>
+                    <option value="G7">G7</option>
+                  </select>
+                  {errors.modelo && (
+                    <p className='text-red-500 text-sm mt-1'>{errors.modelo.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                    Marca
+                  </label>
+                  <select
+                    {...register('marca', {
+                      required: 'La marca es requerida'
+                    })}
+                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    defaultValue={laptop.marca || ""}
+                  >
+                    <option value="">Selecciona una marca</option>
+                    <option value="Coradir">Coradir</option>
+                    <option value="Noblex">Noblex</option>
+                    <option value="Juana Manso">Juana Manso</option>
+                    <option value="EXO">EXO</option>
+                  </select>
+                  {errors.marca && (
+                    <p className='text-red-500 text-sm mt-1'>{errors.marca.message}</p>
+                  )}
+                </div>
                 
                 <div className='flex gap-3 mt-2 flex-col md:flex-row  pt-4 justify-end'>
                     <button

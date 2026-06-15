@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { TablaOrdenes } from '../dashboard/OrdenesProceso'
 import { traerOrdenes } from '../../api/OrdenesApi'
 import { traerMetricasDashboard } from '../../api/DashboardApi'
+import Swal from 'sweetalert2'
 
 export const Dashboard = () => {
   const [ordenesReparando, setOrdenesReparando] = useState([])
@@ -12,16 +13,16 @@ export const Dashboard = () => {
 
   const metricasConfig = [
     { 
-      key: 'laptopsEnReparacion', 
-      label: 'Laptops en Reparación',
+      key: 'netbooksEnReparacion', 
+      label: 'Netbooks en Reparación',
       icon: Package,
       bgColor: 'bg-blue-100',
       textColor: 'text-blue-600',
       iconColor: 'text-blue-500'
     },
     { 
-      key: 'laptopsPendientes', 
-      label: 'Laptops Pendientes',
+      key: 'netbooksPendientes', 
+      label: 'Netbooks Pendientes',
       icon: Clock,
       bgColor: 'bg-yellow-100',
       textColor: 'text-yellow-600',
@@ -58,10 +59,13 @@ export const Dashboard = () => {
         setOrdenesReparando(dataReparando)
         setOrdenesCompletadas(dataCompletadas)
         setMetricas(metricasData)
-        console.log('Órdenes en proceso:', dataReparando)
-        console.log('Órdenes completadas:', dataCompletadas)
-        console.log('Métricas:', metricasData)
       } catch (error) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al cargar los datos del dashboard. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        })
         console.error('Error al traer las órdenes:', error)
       } finally {
         setCargando(false)
