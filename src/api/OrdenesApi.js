@@ -14,7 +14,6 @@ export const traerOrdenes = async(params = {}) => {
 
 export const crearOrden = async(data) => {
     try {
-        console.log('Enviando datos a la API:', data);
         const response = await axios.post(API_URL, data);
         return response.data;
     } catch (error) {

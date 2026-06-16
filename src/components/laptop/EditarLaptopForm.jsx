@@ -125,7 +125,7 @@ export const EditarLaptopForm = ({ laptop, setModal, handleEditarLaptop }) => {
                     type='submit'
                     className='flex-1 cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400'
                     >
-                    Crear Orden
+                    Editar netbook
                     </button>
                 </div>
             </form>

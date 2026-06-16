@@ -4,6 +4,7 @@ import { obtenerDetalleLaptop, actualizarDetalleLaptop } from '../../api/Ordenes
 import { Pencil } from 'lucide-react'
 import { ScanBarcode } from 'lucide-react'
 import { EditarLaptopForm } from '../laptop/EditarLaptopForm'
+import Swal from 'sweetalert2'
 
 export const LaptopDetalle = () => {
   const { id, laptopId } = useParams()
@@ -75,8 +76,19 @@ export const LaptopDetalle = () => {
         ...formData
       }))
       setIsEditing(false)
+      Swal.fire({
+        title: 'Éxito',
+        text: 'La netbook se ha actualizado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      })
     } catch (err) {
-      alert('Error al guardar los cambios: ' + err.message)
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudieron guardar los cambios. Por favor, intenta nuevamente.' + (err.message ? `(${err.message})` : ''),
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      })
     } finally {
       setLoading(false)
     }
@@ -100,11 +112,21 @@ export const LaptopDetalle = () => {
     try {
       await actualizarDetalleLaptop(id, laptopId, { estado: status })
       setLaptop(prev => ({ ...prev, estado: status }))
+      Swal.fire({
+        title: 'Éxito',
+        text: 'El estado se ha actualizado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      })
     } catch (err) {
-      console.error('Error actualizando estado', err)
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo actualizar el estado. Por favor, intenta nuevamente.' + (err.message ? `(${err.message})` : ''),
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      })
       // revert selection on error
       setSelectedStatus(laptop.estado)
-      alert('No se pudo actualizar el estado')
     } finally {
       setSavingStatus(false)
     }

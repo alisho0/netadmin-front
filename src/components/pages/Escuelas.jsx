@@ -6,8 +6,10 @@ import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { CrearEscuelaForm } from '../escuela/CrearEscuelaForm';
 import { PlusIcon } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 export const Escuelas = () => {
+  const navigate = useNavigate();
   const [escuelas, setEscuelas] = useState([]);
   const [modal, setModal] = useState(false);
   const [search, setSearch] = useState('');
@@ -106,7 +108,9 @@ export const Escuelas = () => {
               <h3 className='px-2 font-semibold my-2'>Órdenes</h3>
               <div>
                 {Array.isArray(e.ordenes) && e.ordenes.length > 0 ? e.ordenes.map((o) => (
-                  <div key={o.id} className='flex px-2 py-1 hover:bg-gray-100 transition-colors cursor-pointer border items-center mb-2 border-gray-300 rounded-lg bg-gray-100/50 justify-between'>
+                  <div key={o.id} className='flex px-2 py-1 hover:bg-gray-100 transition-colors cursor-pointer border items-center mb-2 border-gray-300 rounded-lg bg-gray-100/50 justify-between'
+                    onClick={() => navigate(`/ordenes/${o.id}`)}
+                  >
                     <div>
                       <h4 className='font-semibold'>Orden N°{o.numeroOrden}</h4>
                       <div className='flex gap-3 text-sm'>
@@ -115,8 +119,8 @@ export const Escuelas = () => {
                       </div>
                     </div>
 
-                    <div className={`py-1 px-2 rounded-lg ${o.estado == 'COMPLETADO' ? 'bg-green-600 border border-green-800' : 'bg-orange-300/90 border border-orange-800'}`}>
-                      <p className={`font-semibold text-sm ${o.estado == 'COMPLETADO' ? 'text-green-800' : 'text-orange-800'}`}>{o.estado}</p>
+                    <div className={`py-1 px-2 rounded-lg ${o.estado == 'COMPLETADO' ? 'bg-green-100  border border-green-600' : 'bg-orange-300/90 border border-orange-800'}`}>
+                      <p className={`font-semibold text-sm ${o.estado == 'COMPLETADO' ? 'text-green-600' : 'text-orange-800'}`}>{o.estado}</p>
                     </div>
                   </div>
                 )) : (
